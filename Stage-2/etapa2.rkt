@@ -15,7 +15,7 @@
 ; bărbaților și calculează lista bărbaților din problemă.
 ; Folosiți orice funcțională exceptând foldl/foldr.
 (define (get-men mpref)
-  'your-code-here)
+  (map car mpref))
 
 
 ; TODO 2
@@ -25,7 +25,7 @@
 ; Folosiți foldl sau foldr, astfel încât să nu fie necesare
 ; operații de tip append sau reverse.
 (define (get-women wpref)
-  'your-code-here)
+  (foldr (lambda (x acc) (cons (car x) acc)) null wpref))
 
 
 ; TODO 3
@@ -39,7 +39,7 @@
 ; (get-pref-list wpref 'ana) => '(bobo adi cos)
 ; Folosiți minim o funcțională și minim o funcție anonimă.
 (define (get-pref-list pref person)
-  'your-code-here)
+  (cdr (car (filter (lambda (x) (equal? (car x) person)) pref))))
 
 
 ; TODO 4
@@ -52,7 +52,7 @@
 ; și false în caz contrar.
 ; Folosiți funcția member.
 (define (preferable? pref-list x y)
-  'your-code-here)
+  (list? (member y (member x pref-list))))
 
 
 ; TODO 5
@@ -63,7 +63,11 @@
 ; Implementarea trebuie să fie eficientă în sensul că nu trebuie
 ; să continue explorarea listei odată ce s-a găsit elementul.
 (define (find-first p L)
-  'your-code-here)
+  (if (null? L)
+      #f
+      (if (p (car L))
+          (car L)
+          (find-first p (cdr L)))))
 
 
 ; TODO 6
@@ -75,7 +79,10 @@
 ; întoarce false.
 ; Folosiți find-first, fără să îl apelați de 2 ori (hint: define în define).
 (define (get-partner engagements person)
-  'your-code-here)
+  (define element_found (find-first (lambda (x) (equal? (car x) person)) engagements))
+  (if (pair? element_found)
+      (cdr element_found)
+      #f))
   
 
 ; TODO 7
@@ -85,8 +92,16 @@
 ; a fost înlocuit cu valoarea val, celelalte rămânând la fel.
 ; Dacă niciun element din L nu satisface predicatul, lista L
 ; rămâne neschimbată.
+(define (change-first-helper p L val acc)
+  (if (null? L)
+      (reverse acc)
+      (if (p (car L))
+             (append (reverse (cons val acc)) (cdr L))
+             (change-first-helper p (cdr L) val (cons (car L) acc)))))
+
 (define (change-first p L val)
-  'your-code-here)
+  (change-first-helper p L val null))
+          
 
 
 ; TODO 8
@@ -110,7 +125,13 @@
 ; Dacă nu ați implementat better-match-exists? în etapa 1, solicitați 
 ; o rezolvare de la asistent, astfel încât să puteți continua.
 (define (better-match-exists? p1 p2 p1-list pref2 engagements)
-  'your-code-here)
+  (cond
+    ((null? p1-list) #f)
+    ; am ajuns la persoana cu care e logodita p1 si ne oprim
+    ((equal? (first p1-list) p2) #f)
+    ; verifcam daca persoana curenta din p1-list o prefera pe p1 in detrimentul persoanei cu care e logodita
+    ((preferable? (get-pref-list pref2 (first p1-list)) p1 (get-partner engagements (first p1-list))) #t)
+    (else (better-match-exists? p1 p2 (rest p1-list) pref2 engagements))))
 
 
 ; TODO 9
