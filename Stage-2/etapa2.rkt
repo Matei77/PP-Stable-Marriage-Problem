@@ -1,3 +1,5 @@
+; Ionescu Matei-Stefan - 323CAb - 2022-2023
+
 #lang racket
 
 (provide (all-defined-out))
@@ -115,7 +117,7 @@
 ;   persoanele de același gen cu p1
 ; Folosiți change-first.
 (define (update-engagements engagements p1 p2)
-  'your-code-here)
+  (change-first (lambda (x) (equal? (car x) p1)) engagements (cons p1 p2)))
 
 
 ; TODO
@@ -146,5 +148,4 @@
 ; - fiecare cuplu din lista engagements are pe prima poziție
 ;   o femeie
 (define (stable-match? engagements mpref wpref)
-  'your-code-here)
-
+  (null? (filter (lambda (x) (better-match-exists? (cdr x) (car x) (get-pref-list mpref (cdr x)) wpref engagements)) engagements)))
