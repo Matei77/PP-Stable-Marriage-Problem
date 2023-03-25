@@ -1,3 +1,5 @@
+; Ionescu Matei-Stefan - 323CAb - 2022-2023
+
 #lang racket
 
 (require "etapa2.rkt")
