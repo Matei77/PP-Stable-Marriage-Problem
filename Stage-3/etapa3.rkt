@@ -22,7 +22,13 @@
 ; Folosiți una sau mai multe dintre expresiile let, let*, letrec,
 ; named let pentru a vă putea conforma acestor restricții.
 (define (get-unstable-couples engagements mpref wpref)
-  'your-code-here)      
+  (let iter ((L engagements) (result null))
+    (cond
+      ((null? L) result)
+      ((or (better-match-exists? (cdr (car L)) (car (car L)) (get-pref-list mpref (cdr (car L))) wpref engagements)
+           (better-match-exists? (car (car L)) (cdr (car L)) (get-pref-list wpref (car (car L))) mpref (map (lambda (x) (cons (cdr x) (car x))) engagements))) (iter (cdr L) (cons (car L) result)))
+      (else (iter (cdr L) result)))))
+      
 
 
 ; TODO 2
@@ -44,7 +50,28 @@
 ; veți defini funcții ajutătoare recursive).
 ; Folosiți let și/sau let* pentru a evita calcule duplicate.
 (define (engage free-men engagements mpref wpref)
-  'your-code-here)
+  (let iter ((L free-men)       ; L = lista barbatilor nelogoditi
+             (eng engagements)) ; eng = lista de logodne
+    
+    (if (null? L)
+        eng ; niciun barbat nelogodit ramas
+        (let mpref-iter ((m-pref-list (get-pref-list mpref (car L)))) ; m-pref-list = lista de preferinte a lui m
+    
+          (let* ((m (car L))                           ; m = primul barbat din lista de barbati nelogoditi
+                 (w (car m-pref-list))                 ; w = prima femeie din lista de preferinte a lui m
+                 (w-pref-list (get-pref-list wpref w)) ; w-pref-list = lista de preferinte a lui w
+                 (l (get-partner eng w)))              ; l = logodincul actual al lui w
+        
+            (cond
+              ; w este nelogodita
+              ((not l) (iter (cdr L) (cons (cons w m) eng)))
+        
+              ; w il prefera pe m fata de l
+              ((preferable? w-pref-list m l) (iter (cons l (cdr L)) (update-engagements eng w m)))
+
+              ; altfel repeta cu urmatoarea femeie din m-pref-list
+              (else (mpref-iter (cdr m-pref-list)))))))))
+              
 
 
 ; TODO 3
@@ -54,7 +81,7 @@
 ; de preferințe feminine wpref și calculează o listă completă de
 ; logodne stabile conform acestor preferințe.
 (define (gale-shapley mpref wpref)
-  'your-code-here)
+  (engage (get-men mpref) null mpref wpref))
 
 
 ; TODO 4
@@ -63,5 +90,5 @@
 ; care apar în perechi.
 ; Folosiți funcționale, fără recursivitate explicită.
 (define (get-couple-members pair-list)
-  'your-code-here)
+  (foldr (lambda (x acc) (cons (cdr x) (cons (car x) acc))) null pair-list)) 
 
