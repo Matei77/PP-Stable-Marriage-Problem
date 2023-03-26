@@ -28,7 +28,7 @@
              (result null))  ; result = lista cuplurilor instabile pe care o formam
 
     (if (null? L)
-        result ; am verificat toate logodnele, deci returnam lista cuplurilor instablie        
+        result ; am verificat toate logodnele, deci returnam lista cuplurilor instabile        
         (let* ((current-eng (car L))     ; current-eng = logodna pe care o verificam in acest pas
                (remaining-eng (cdr L))   ; remaining-eng = lista de logodne pe care nu le-am verificat inca
                (w (car current-eng))     ; w = femeia din logodna curenta
@@ -37,7 +37,7 @@
           (if (or (better-match-exists? m w (get-pref-list mpref m) wpref engagements)
                   (better-match-exists? w m (get-pref-list wpref w) mpref (map (lambda (x) (cons (cdr x) (car x))) engagements)))
 
-              ; daca logodna este instablia o adaugam la rezultat si verificam restul listei de logodne
+              ; daca logodna este instabila o adaugam la rezultat si verificam restul listei de logodne
               (iter remaining-eng (cons current-eng result))
 
               ; altfel verificam restul listei de logodne
@@ -74,7 +74,7 @@
           (let* ((m (car L))                           ; m = primul barbat din lista de barbati nelogoditi
                  (w (car m-pref-list))                 ; w = prima femeie din lista de preferinte a lui m
                  (w-pref-list (get-pref-list wpref w)) ; w-pref-list = lista de preferinte a lui w
-                 (l (get-partner eng w)))              ; l = logodincul actual al lui w
+                 (l (get-partner eng w)))              ; l = logodnicul actual al lui w
         
             (cond
               ; w este nelogodita
