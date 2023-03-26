@@ -24,12 +24,24 @@
 ; Folosiți una sau mai multe dintre expresiile let, let*, letrec,
 ; named let pentru a vă putea conforma acestor restricții.
 (define (get-unstable-couples engagements mpref wpref)
-  (let iter ((L engagements) (result null))
-    (cond
-      ((null? L) result)
-      ((or (better-match-exists? (cdr (car L)) (car (car L)) (get-pref-list mpref (cdr (car L))) wpref engagements)
-           (better-match-exists? (car (car L)) (cdr (car L)) (get-pref-list wpref (car (car L))) mpref (map (lambda (x) (cons (cdr x) (car x))) engagements))) (iter (cdr L) (cons (car L) result)))
-      (else (iter (cdr L) result)))))
+  (let iter ((L engagements) ; L = lista logodnelor
+             (result null))  ; result = lista cuplurilor instabile pe care o formam
+
+    (if (null? L)
+        result ; am verificat toate logodnele, deci returnam lista cuplurilor instablie        
+        (let* ((current-eng (car L))     ; current-eng = logodna pe care o verificam in acest pas
+               (remaining-eng (cdr L))   ; remaining-eng = lista de logodne pe care nu le-am verificat inca
+               (w (car current-eng))     ; w = femeia din logodna curenta
+               (m (cdr current-eng)))    ; m = barbatul din logodna curenta
+       
+          (if (or (better-match-exists? m w (get-pref-list mpref m) wpref engagements)
+                  (better-match-exists? w m (get-pref-list wpref w) mpref (map (lambda (x) (cons (cdr x) (car x))) engagements)))
+
+              ; daca logodna este instablia o adaugam la rezultat si verificam restul listei de logodne
+              (iter remaining-eng (cons current-eng result))
+
+              ; altfel verificam restul listei de logodne
+              (iter remaining-eng result))))))
       
 
 
@@ -56,7 +68,7 @@
              (eng engagements)) ; eng = lista de logodne
     
     (if (null? L)
-        eng ; niciun barbat nelogodit ramas
+        eng ; niciun barbat nelogodit ramas, deci returnam lista de logodne stabile
         (let mpref-iter ((m-pref-list (get-pref-list mpref (car L)))) ; m-pref-list = lista de preferinte a lui m
     
           (let* ((m (car L))                           ; m = primul barbat din lista de barbati nelogoditi
