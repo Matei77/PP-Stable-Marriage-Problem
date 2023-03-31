@@ -24,24 +24,26 @@
 ; Folosiți una sau mai multe dintre expresiile let, let*, letrec,
 ; named let pentru a vă putea conforma acestor restricții.
 (define (get-unstable-couples engagements mpref wpref)
-  (let iter ((L engagements) ; L = lista logodnelor
-             (result null))  ; result = lista cuplurilor instabile pe care o formam
+  (let ((rev-eng (map (lambda (x) (cons (cdr x) (car x))) engagements))) ; rev-eng = lista logodnelor cu personele inversate
+    
+    (let iter ((L engagements) ; L = lista logodnelor
+               (result null))  ; result = lista cuplurilor instabile pe care o formam
 
-    (if (null? L)
-        result ; am verificat toate logodnele, deci returnam lista cuplurilor instabile        
-        (let* ((current-eng (car L))     ; current-eng = logodna pe care o verificam in acest pas
-               (remaining-eng (cdr L))   ; remaining-eng = lista de logodne pe care nu le-am verificat inca
-               (w (car current-eng))     ; w = femeia din logodna curenta
-               (m (cdr current-eng)))    ; m = barbatul din logodna curenta
+      (if (null? L)
+          result ; am verificat toate logodnele, deci returnam lista cuplurilor instabile        
+          (let* ((current-eng (car L))     ; current-eng = logodna pe care o verificam in acest pas
+                 (remaining-eng (cdr L))   ; remaining-eng = lista de logodne pe care nu le-am verificat inca
+                 (w (car current-eng))     ; w = femeia din logodna curenta
+                 (m (cdr current-eng)))    ; m = barbatul din logodna curenta
        
-          (if (or (better-match-exists? m w (get-pref-list mpref m) wpref engagements)
-                  (better-match-exists? w m (get-pref-list wpref w) mpref (map (lambda (x) (cons (cdr x) (car x))) engagements)))
+            (if (or (better-match-exists? m w (get-pref-list mpref m) wpref engagements)
+                    (better-match-exists? w m (get-pref-list wpref w) mpref rev-eng))
 
-              ; daca logodna este instabila o adaugam la rezultat si verificam restul listei de logodne
-              (iter remaining-eng (cons current-eng result))
+                ; daca logodna este instabila o adaugam la rezultat si verificam restul listei de logodne
+                (iter remaining-eng (cons current-eng result))
 
-              ; altfel verificam restul listei de logodne
-              (iter remaining-eng result))))))
+                ; altfel verificam restul listei de logodne
+                (iter remaining-eng result)))))))
       
 
 
